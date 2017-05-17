@@ -370,4 +370,20 @@ export default defineMessages({
     id: 'app.messages.secret',
     defaultMessage: 'Secret',
   },
+  version: {
+    id: 'app.messages.version',
+    defaultMessage: 'Versions',
+  },
+  checkout: {
+    id: 'app.messages.checkout',
+    defaultMessage: 'Checkout',
+  },
+  preview: {
+    id: 'app.messages.preview',
+    defaultMessage: 'Preview',
+  },
+  diff: {
+    id: 'app.messages.diff',
+    defaultMessage: 'Diff',
+  },
 });

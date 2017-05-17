@@ -228,6 +228,7 @@
     "react-ace": "^4.1.6",
     "react-bootstrap": "^0.30.8",
     "react-confirm": "^0.1.14",
+    "react-diff": "^0.0.7",
     "react-dom": "15.4.1",
     "react-helmet": "3.2.2",
     "react-intl": "2.1.5",

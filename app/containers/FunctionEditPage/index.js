@@ -9,11 +9,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 import Helmet from 'react-helmet';
-import { Modal } from 'react-bootstrap';
 import { createStructuredSelector } from 'reselect';
 import FunctionForm from 'components/FunctionForm';
 import LoadingIndicator from 'components/LoadingIndicator';
 import ErrorIndicator from 'components/ErrorIndicator';
+import FunctionDuplicateModal from 'components/FunctionDuplicateModal';
+import VersionPreviewModal from 'components/VersionPreviewModal';
 import { makeSelectLoading, makeSelectFunctionByName, makeSelectTriggersHttp, makeSelectTriggersTimer, makeSelectError, makeSelectFunctionTest, makeSelectKubeWatchers } from 'containers/FunctionsPage/selectors';
 import { makeSelectEnvironments } from 'containers/EnvironmentsPage/selectors';
 import { loadEnvironmentAction } from 'containers/EnvironmentsListPage/actions';
@@ -38,7 +39,9 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
       activeTab: hash === '' ? 'function' : hash,
       editing: false,
       showDuplicateModal: false,
+      showVersionPreviewModal: false,
       duplicatedFuncName: '',
+      selectedVersion: null,
     };
     this.onFunctionChange = this.onFunctionChange.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -54,9 +57,10 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
     this.onTabChange = this.onTabChange.bind(this);
     this.onFunctionTest = this.onFunctionTest.bind(this);
     this.onDuplicate = this.onDuplicate.bind(this);
-    this.onOpenDuplicateModal = this.onOpenDuplicateModal.bind(this);
-    this.onCloseDuplicateModal = this.onCloseDuplicateModal.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.onChangeStatue = this.onChangeStatue.bind(this);
+    this.onVersionPreview = this.onVersionPreview.bind(this);
+    this.onVersionCheckout = this.onVersionCheckout.bind(this);
   }
 
   componentDidMount() {
@@ -173,12 +177,10 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
     this.props.updateFunction(fn);
   }
 
-  onCloseDuplicateModal() {
-    this.setState({ showDuplicateModal: false });
-  }
-
-  onOpenDuplicateModal() {
-    this.setState({ showDuplicateModal: true });
+  onChangeStatue(k, v) {
+    const obj = {};
+    obj[k] = v;
+    this.setState(obj);
   }
 
   onDuplicate(event) {
@@ -191,12 +193,32 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
     this.onCloseDuplicateModal();
   }
 
+  onVersionPreview(version) {
+    // set the version to a temp
+    this.onChangeStatue('selectedVersion', version);
+    this.onChangeStatue('showVersionPreviewModal', true);
+  }
+
+  onVersionCheckout(version) {
+    // change the code to the selected version
+    this.onCodeChange(version.code);
+    this.onChangeStatue('showVersionPreviewModal', false);
+    this.onTabChange('function');
+  }
+
   render() {
-    const { item, activeTab, showDuplicateModal } = this.state;
+    const { item, activeTab, showDuplicateModal, showVersionPreviewModal, selectedVersion } = this.state;
     const { loading, error, functionTest, environments } = this.props;
     if (loading || item === undefined) {
       return <LoadingIndicator />;
     }
+    const original = this.props.functionByName(item.name);
+    item.versions = [
+      { uid: 'some-uid', index: 1, time: new Date().toISOString(), code: 'v1' },
+      { uid: 'some-uid', index: 2, time: new Date().toISOString(), code: 'v2' },
+      { uid: 'some-uid', index: 3, time: new Date().toISOString(), code: original.code },
+    ];
+    const latestVersion = item.versions[item.versions.length - 1];
     return (
       <div>
         <Helmet
@@ -208,7 +230,9 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
         }
 
         <FunctionForm
-          environments={environments} onChange={this.onFunctionChange} item={item}
+          environments={environments}
+          item={item}
+          onChange={this.onFunctionChange}
           onHttpTriggerRemove={this.onHttpTriggerRemove}
           onHttpTriggerCreate={this.onHttpTriggerCreate}
           onKubeWatcherRemove={this.onKubeWatcherRemove}
@@ -222,33 +246,31 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
           activeTab={activeTab}
           onTabChange={this.onTabChange}
           onFunctionTest={this.onFunctionTest}
+          onVersionPreview={this.onVersionPreview}
+          onVersionCheckout={this.onVersionCheckout}
           functionTest={functionTest}
         />
-
-        <Modal show={showDuplicateModal} onHide={this.onCloseDuplicateModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Name the duplication</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h4>Please rename the duplicated function</h4>
-            <div className="form-group">
-              <label htmlFor="funcName"><FormattedMessage {...commonMessages.name} /></label>
-              <input type="text" className="form-control" id="funcName" name="duplicatedFuncName" onChange={this.onChange} />
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <a className="btn btn-primary" onClick={this.onDuplicate}>
-              <FormattedMessage {...commonMessages.deploy} />
-            </a>
-            <a className="btn btn-default" onClick={this.onCloseDuplicateModal}>
-              <FormattedMessage {...commonMessages.cancel} />
-            </a>
-          </Modal.Footer>
-        </Modal>
-
+        <FunctionDuplicateModal
+          show={showDuplicateModal}
+          onChange={this.onChange}
+          onHide={() => this.onChangeStatue('showDuplicateModal', false)}
+          onDuplicate={this.onDuplicate}
+        />
+        <VersionPreviewModal
+          show={showVersionPreviewModal}
+          item={item}
+          latestVersion={latestVersion}
+          selectedVersion={selectedVersion === null ? latestVersion : selectedVersion}
+          onVersionCheckout={this.onVersionCheckout}
+          onHide={() => this.onChangeStatue('showVersionPreviewModal', false)}
+        />
+        <hr />
         <div className="pull-right">
           <a className="btn btn-primary" onClick={this.onSave}><FormattedMessage {...commonMessages.deploy} /></a> { ' ' }
-          <a className="btn btn-warning" onClick={this.onOpenDuplicateModal}><FormattedMessage {...commonMessages.duplicate} /></a> { ' ' }
+          <a className="btn btn-warning" onClick={() => this.onChangeStatue('showDuplicateModal', true)}>
+            <FormattedMessage {...commonMessages.duplicate} />
+          </a>
+          { ' ' }
           <Link to="/" className="btn btn-default"><FormattedMessage {...commonMessages.cancel} /></Link>
         </div>
       </div>

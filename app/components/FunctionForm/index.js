@@ -11,6 +11,7 @@ import TriggerHttpForm from 'components/TriggerHttpForm';
 import TriggerTimerForm from 'components/TriggerTimerForm';
 import TriggerMQForm from 'components/TriggerMQForm';
 import KubeWatcherForm from 'components/KubeWatcherForm';
+import FunctionVerionForm from 'components/FunctionVersionForm';
 import { FormattedMessage } from 'react-intl';
 import commonMessages from 'messages';
 
@@ -45,13 +46,16 @@ class FunctionForm extends React.Component { // eslint-disable-line react/prefer
       onKubeWatcherRemove, onKubeWatcherCreate,
       onTimerTriggerRemove, onTimerTriggerCreate,
       onMQTriggerRemove, onMQTriggerCreate,
+      onVersionPreview, onVersionCheckout,
     } = this.props;
+
 
     return (
       <div>
         <ul className="nav nav-tabs">
           <li role="presentation" className={activeTab === 'function' ? 'active' : ''}><a onClick={() => onTabChange('function')}><FormattedMessage {...commonMessages.function} /></a></li>
           <li role="presentation" className={activeTab === 'trigger' ? 'active' : ''}><a onClick={() => onTabChange('trigger')}><FormattedMessage {...commonMessages.trigger} /></a></li>
+          <li role="presentation" className={activeTab === 'version' ? 'active' : ''}><a onClick={() => onTabChange('version')}><FormattedMessage {...commonMessages.version} /></a></li>
         </ul>
         <div style={{ display: activeTab === 'function' ? 'block' : 'none' }}>
           <FunctionTabForm item={item} environments={environments} onChange={onChange} metadataEditable={metadataEditable} onCodeChange={onCodeChange} onFunctionTest={onFunctionTest} functionTest={functionTest} />
@@ -61,6 +65,9 @@ class FunctionForm extends React.Component { // eslint-disable-line react/prefer
           <KubeWatcherForm watchers={item.kubeWatchers} onRemove={onKubeWatcherRemove} onCreate={onKubeWatcherCreate} />
           <TriggerTimerForm triggers={item.triggersTimer} onRemove={onTimerTriggerRemove} onCreate={onTimerTriggerCreate} />
           <TriggerMQForm triggers={item.triggersMQ} onRemove={onMQTriggerRemove} onCreate={onMQTriggerCreate} />
+        </div>
+        <div style={{ display: activeTab === 'version' ? 'block' : 'none' }}>
+          <FunctionVerionForm versions={item.versions} onCheckout={onVersionCheckout} onPreview={onVersionPreview} />
         </div>
       </div>
     );
@@ -86,6 +93,8 @@ FunctionForm.propTypes = {
   onCodeChange: PropTypes.func,
   onTabChange: PropTypes.func,
   onFunctionTest: PropTypes.func,
+  onVersionPreview: PropTypes.func,
+  onVersionCheckout: PropTypes.func,
   activeTab: PropTypes.string,
   functionTest: PropTypes.object,
 };
