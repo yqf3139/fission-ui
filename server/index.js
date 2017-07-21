@@ -22,6 +22,11 @@ if (process.env.FISSION_ROUTER !== undefined) {
   routerBackend = process.env.FISSION_ROUTER;
 }
 
+let catalogBackend = '192.168.99.100:30080';
+if (process.env.K8S_CATALOG_URL !== undefined) {
+  catalogBackend = process.env.K8S_CATALOG_URL;
+}
+
 let k8sBackend = '127.0.0.1:28001';
 if (process.env.FISSION_K8S !== undefined) {
   k8sBackend = process.env.FISSION_K8S;
@@ -41,6 +46,7 @@ app.use('/proxy/tpr/benchmark', proxy({
   changeOrigin: true,
 }));
 appInfluxdb.use('', proxy({ target: `http://${influxdbBackend}`, changeOrigin: true }));
+app.use('/proxy/catalog', proxy({ target: `http://${catalogBackend}`, pathRewrite: { '^/proxy/catalog': '' }, changeOrigin: true }));
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {

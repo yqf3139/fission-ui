@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const basePath = '/proxy/controller/v1/';
 const routerPath = '/proxy/router';
+const catalogPath = '/proxy/catalog/apis/servicecatalog.k8s.io/v1alpha1/';
 
 /**
  * Parses the JSON returned by a network request
@@ -170,3 +171,33 @@ export function postTriggerMQ(item) {
     .then(checkStatus)
     .then(parseJSON);
 }
+
+export function catalogGet(category) {
+  let path = category;
+  if (category !== 'serviceclasses' && category !== 'brokers') {
+    path = `namespaces/fission/${category}`;
+  }
+  return axios.get(`${catalogPath}${path}`)
+    .then(checkStatus)
+    .then(parseJSON);
+}
+
+export function catalogPost(category, item) {
+  let path = category;
+  if (category !== 'serviceclasses' && category !== 'brokers') {
+    path = `namespaces/fission/${category}`;
+  }
+  return axios.post(`${catalogPath}${path}`, item)
+    .then(checkStatus)
+    .then(parseJSON);
+}
+export function catalogDelete(category, item) {
+  let path = category;
+  if (category !== 'serviceclasses' && category !== 'brokers') {
+    path = `namespaces/fission/${category}`;
+  }
+  return axios.delete(`${catalogPath}${path}/${item.metadata.name}`)
+    .then(checkStatus)
+    .then(parseJSON);
+}
+

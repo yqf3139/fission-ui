@@ -342,4 +342,32 @@ export default defineMessages({
     id: 'app.messages.respTopic',
     defaultMessage: 'Response Topic',
   },
+  serviceCatalog: {
+    id: 'app.messages.serviceCatalog',
+    defaultMessage: 'Service Catalog',
+  },
+  brokerName: {
+    id: 'app.messages.brokerName',
+    defaultMessage: 'Broker Name',
+  },
+  plan: {
+    id: 'app.messages.plan',
+    defaultMessage: 'Plan',
+  },
+  url: {
+    id: 'app.messages.url',
+    defaultMessage: 'Url',
+  },
+  serviceClass: {
+    id: 'app.messages.serviceClass',
+    defaultMessage: 'Service Class',
+  },
+  id: {
+    id: 'app.messages.id',
+    defaultMessage: 'ID',
+  },
+  secret: {
+    id: 'app.messages.secret',
+    defaultMessage: 'Secret',
+  },
 });

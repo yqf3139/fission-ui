@@ -307,6 +307,27 @@ export default function createRoutes(store) {
         },
       ],
     }, {
+      path: '/service-catalog',
+      name: 'service catalog',
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          System.import('containers/ServiceCatalogPage/reducer'), // One reducer for all subroutes
+          System.import('containers/ServiceCatalogPage/sagas'),
+          System.import('containers/ServiceCatalogPage'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('service-catalog', reducer.default);
+          injectSagas(sagas.default);
+
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       path: '*',
       name: 'notfound',
       getComponent(nextState, cb) {
