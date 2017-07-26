@@ -65,6 +65,9 @@ import {
   DELETE_TRIGGERMQ_REQUEST,
   DELETE_TRIGGERMQ_ERROR,
   DELETE_TRIGGERMQ_SUCCESS,
+  LOAD_VERSIONS_REQUEST,
+  LOAD_VERSIONS_ERROR,
+  LOAD_VERSIONS_SUCCESS,
 } from './constants';
 
 const initialState = fromJS({
@@ -73,11 +76,13 @@ const initialState = fromJS({
   triggersTimer: [],
   triggersMQ: [],
   kubeWatchers: [],
+  versions: [],
   functionLoading: false,
   triggerHttpLoading: false,
   kubeWatcherLoading: false,
   triggerTimerLoading: false,
   triggerMQLoading: false,
+  versionLoading: false,
   functionTest: { loading: false, response: {} },
   error: false,
   uploadFunctions: [],
@@ -271,6 +276,20 @@ function functionsReducer(state = initialState, action) {
         .set('error', false)
         .set('triggerMQLoading', false)
         .update('triggersMQ', (mqts) => mqts.filter((e) => e.getIn(['metadata', 'name']) !== action.data.metadata.name));
+
+    case LOAD_VERSIONS_REQUEST:
+      return state
+        .set('versionLoading', true)
+        .set('error', false);
+    case LOAD_VERSIONS_ERROR:
+      return state
+        .set('error', fromJS(action.error))
+        .set('versionLoading', false);
+    case LOAD_VERSIONS_SUCCESS:
+      return state
+        .set('error', false)
+        .set('versionLoading', false)
+        .set('versions', fromJS(action.data));
     default:
       return state;
   }

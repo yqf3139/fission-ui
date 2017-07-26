@@ -14,12 +14,20 @@ import {
   LOAD_TRIGGERSMQ_REQUEST,
   DELETE_TRIGGERMQ_REQUEST,
   CREATE_TRIGGERMQ_REQUEST,
+  LOAD_VERSIONS_REQUEST,
 } from 'containers/FunctionsPage/constants';
 
 
 export function getFunctionAction(name) {
   return {
     type: GET_FUNCTION_REQUEST,
+    name,
+  };
+}
+
+export function getFunctionVersionAction(name) {
+  return {
+    type: LOAD_VERSIONS_REQUEST,
     name,
   };
 }

@@ -20,6 +20,7 @@ const makeSelectFunctionByName = () => createSelector(
         triggersTimer: substate.get('triggersTimer').filter((trigger) => trigger.getIn(['function', 'name']) === functionFound.getIn(['metadata', 'name'])).toJS(),
         kubeWatchers: substate.get('kubeWatchers').filter((watcher) => watcher.getIn(['function', 'name']) === functionFound.getIn(['metadata', 'name'])).toJS(),
         triggersMQ: substate.get('triggersMQ').filter((trigger) => trigger.getIn(['function', 'name']) === functionFound.getIn(['metadata', 'name'])).toJS(),
+        versions: substate.get('versions').toJS(),
       });
     }
     return false;
@@ -34,6 +35,7 @@ const makeSelectLoading = () => createSelector(
                              substate.get('kubeWatcherLoading') ||
                              substate.get('triggerTimerLoading') ||
                              substate.get('triggerMQLoading') ||
+                             substate.get('versionLoading') ||
                              substateEnv.get('loading')
 );
 
@@ -56,6 +58,7 @@ const makeSelectFunctions = () => createSelector(
     triggersTimer: (substate.get('triggersTimer').filter((trigger) => trigger.getIn(['function', 'name']) === e.getIn(['metadata', 'name']))).toJS(), // TODO improve, simplify object
     triggersMQ: (substate.get('triggersMQ').filter((trigger) => trigger.getIn(['function', 'name']) === e.getIn(['metadata', 'name']))).toJS(), // TODO improve, simplify object
     kubeWatchers: (substate.get('kubeWatchers').filter((watcher) => watcher.getIn(['function', 'name']) === e.getIn(['metadata', 'name']))).toJS(),
+    versions: (substate.get('versions')).toJS(),
   })).toJS()
 );
 
@@ -79,6 +82,11 @@ const makeSelectTriggersMQ = () => createSelector(
   (substate) => substate.get('triggersMQ').toJS()
 );
 
+const makeSelectFunctionVersion = () => createSelector(
+  selectFunctionsPageDomain(),
+  (substate) => substate.get('functionVersion').toJS()
+);
+
 const makeSelectUploadFunctions = () => createSelector(
   selectFunctionsPageDomain(),
   (substate) => substate.get('uploadFunctions').toJS()
@@ -94,5 +102,6 @@ export {
   makeSelectKubeWatchers,
   makeSelectTriggersTimer,
   makeSelectTriggersMQ,
+  makeSelectFunctionVersion,
   makeSelectUploadFunctions,
 };

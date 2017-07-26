@@ -25,13 +25,11 @@ class FunctionVersionForm extends React.Component { // eslint-disable-line react
           </thead>
           <tbody>
             {
-              versions.map((item, index) => (
-                <Item
-                  version={item}
-                  key={`versions-${index}`}
-                  onPreview={() => { onPreview(item); }}
-                />
-              ))
+              versions.map((item, index) => {
+                const v = Object.assign({}, item);
+                v.index = index + 1;
+                return <Item version={v} key={`versions-${index}`} onPreview={() => { onPreview(v); }} />;
+              })
             }
           </tbody>
         </table>

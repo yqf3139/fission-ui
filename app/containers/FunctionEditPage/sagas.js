@@ -6,6 +6,7 @@ import {
   removeTriggerTimer, postTriggerTimer,
   removeTriggerMQ, postTriggerMQ,
   removeKubeWatcher, postKubeWatcher,
+  getFunctionVersions,
 } from 'utils/api';
 import {
   GET_FUNCTION_REQUEST,
@@ -38,6 +39,9 @@ import {
   DELETE_TRIGGERMQ_REQUEST,
   DELETE_TRIGGERMQ_ERROR,
   DELETE_TRIGGERMQ_SUCCESS,
+  LOAD_VERSIONS_REQUEST,
+  LOAD_VERSIONS_SUCCESS,
+  LOAD_VERSIONS_ERROR,
 } from 'containers/FunctionsPage/constants';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
@@ -145,6 +149,14 @@ function* deleteTriggerMQ(action) {
     yield put({ type: DELETE_TRIGGERMQ_ERROR, error });
   }
 }
+function* getFunctionVersionsSagaRequest(action) {
+  try {
+    const data = yield call(getFunctionVersions, action.name);
+    yield put({ type: LOAD_VERSIONS_SUCCESS, data });
+  } catch (error) {
+    yield put({ type: LOAD_VERSIONS_ERROR, error });
+  }
+}
 
 export function* getFunctionSaga() {
   // See example in containers/HomePage/sagas.js
@@ -217,6 +229,13 @@ export function* removeTriggerMQSaga() {
   yield take(LOCATION_CHANGE);
   yield cancel(watcher);
 }
+export function* getFunctionVersionsSaga() {
+  const watcher = yield takeLatest(LOAD_VERSIONS_REQUEST, getFunctionVersionsSagaRequest);
+
+  // Suspend execution until location changes
+  yield take(LOCATION_CHANGE);
+  yield cancel(watcher);
+}
 
 // All sagas to be loaded
 export default [
@@ -230,4 +249,5 @@ export default [
   removeTriggerTimerSaga,
   createTriggerMQSaga,
   removeTriggerMQSaga,
+  getFunctionVersionsSaga,
 ];

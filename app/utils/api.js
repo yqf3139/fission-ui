@@ -73,8 +73,8 @@ export function getFunctions() {
     .then(parseJSON);
 }
 
-export function getFunction(name) {
-  return axios.get(`${basePath}functions/${name}`)
+export function getFunction(name, uid) {
+  return axios.get(`${basePath}functions/${name}${(uid ? `?uid=${uid}` : '')}`)
     .then(checkStatus)
     .then(parseJSON);
 }
@@ -201,3 +201,8 @@ export function catalogDelete(category, item) {
     .then(parseJSON);
 }
 
+export function getFunctionVersions(name) {
+  return axios.get(`${basePath}functions/${name}/versions`)
+    .then(checkStatus)
+    .then(parseJSON);
+}

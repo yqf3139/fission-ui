@@ -17,7 +17,7 @@ class Item extends React.Component { // eslint-disable-line react/prefer-statele
     return (
       <tr>
         <td>{version.index}</td>
-        <td>{version.time}</td>
+        <td>{new Date(version.timestamp * 1000).toLocaleString()}</td>
         <td>
           <a className="btn btn-primary" onClick={onPreview}>
             <FormattedMessage {...commonMessages.preview} />

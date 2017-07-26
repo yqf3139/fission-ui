@@ -22,8 +22,9 @@ import { testFunctionAction, cleanTestFunctionAction } from 'containers/Function
 import { getFunctionAction, loadTriggersHttpAction, deleteTriggerHttpAction, updateFunctionAction, createFunctionAction,
   createTriggerHttpAction, loadKubeWatchersAction, createKubeWatcherAction, deleteKubeWatcherAction,
   createTriggerTimerAction, loadTriggersTimerAction, deleteTriggerTimerAction,
-  createTriggerMQAction, loadTriggersMQAction, deleteTriggerMQAction,
+  createTriggerMQAction, loadTriggersMQAction, deleteTriggerMQAction, getFunctionVersionAction,
 } from 'containers/FunctionEditPage/actions';
+import { getFunction } from 'utils/api';
 import commonMessages from 'messages';
 import { encodeBase64 } from 'utils/util';
 
@@ -70,6 +71,7 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
     this.props.loadTriggersTimerData();
     this.props.loadTriggersMQData();
     this.props.loadFunctionData(this.props.params.name);
+    this.props.loadFunctionVersionData(this.props.params.name);
     this.props.cleanTestFunction();
   }
 
@@ -82,6 +84,8 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
         this.state.item.triggersHttp = nextState.triggersHttp;
         this.state.item.kubeWatchers = nextState.kubeWatchers;
         this.state.item.triggersTimer = nextState.triggersTimer;
+        this.state.item.triggersMQ = nextState.triggersMQ;
+        this.state.item.versions = nextState.versions;
       }
     }
   }
@@ -195,8 +199,18 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
 
   onVersionPreview(version) {
     // set the version to a temp
-    this.onChangeStatue('selectedVersion', version);
-    this.onChangeStatue('showVersionPreviewModal', true);
+    const that = this;
+    const v = Object.assign({}, version);
+
+    getFunction(this.state.item.name, version.uid)
+      .then((data) => {
+        v.code = atob(data.code);
+        that.onChangeStatue('selectedVersion', v);
+        that.onChangeStatue('showVersionPreviewModal', true);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   onVersionCheckout(version) {
@@ -212,13 +226,8 @@ export class FunctionEditPage extends React.Component { // eslint-disable-line r
     if (loading || item === undefined) {
       return <LoadingIndicator />;
     }
-    const original = this.props.functionByName(item.name);
-    item.versions = [
-      { uid: 'some-uid', index: 1, time: new Date().toISOString(), code: 'v1' },
-      { uid: 'some-uid', index: 2, time: new Date().toISOString(), code: 'v2' },
-      { uid: 'some-uid', index: 3, time: new Date().toISOString(), code: original.code },
-    ];
-    const latestVersion = item.versions[item.versions.length - 1];
+
+    const latestVersion = Object.assign({}, item);
     return (
       <div>
         <Helmet
@@ -291,6 +300,7 @@ FunctionEditPage.propTypes = {
   functionByName: PropTypes.func.isRequired,
   loadEnvironmentData: PropTypes.func.isRequired,
   loadFunctionData: PropTypes.func.isRequired,
+  loadFunctionVersionData: PropTypes.func.isRequired,
   loadTriggersHttpData: PropTypes.func.isRequired,
   loadTriggersTimerData: PropTypes.func.isRequired,
   loadTriggersMQData: PropTypes.func.isRequired,
@@ -330,6 +340,7 @@ function mapDispatchToProps(dispatch) {
     loadTriggersTimerData: () => dispatch(loadTriggersTimerAction()),
     loadTriggersMQData: () => dispatch(loadTriggersMQAction()),
     loadFunctionData: (name) => dispatch(getFunctionAction(name)),
+    loadFunctionVersionData: (name) => dispatch(getFunctionVersionAction(name)),
     updateFunction: (fn) => dispatch(updateFunctionAction(fn)),
     createFunction: (fn) => dispatch(createFunctionAction(fn)),
     createTriggerHttp: (trigger) => dispatch(createTriggerHttpAction(trigger)),
