@@ -37,6 +37,11 @@ if (process.env.FISSION_LOGDB !== undefined) {
   influxdbBackend = process.env.FISSION_LOGDB;
 }
 
+let prometheusBackend = '192.168.99.100:31325';
+if (process.env.FISSION_PROMETHEUS !== undefined) {
+  prometheusBackend = process.env.FISSION_PROMETHEUS;
+}
+
 // Setup proxy for fission APIs
 app.use('/proxy/controller', proxy({ target: `http://${controllerBackend}`, pathRewrite: { '^/proxy/controller': '' }, changeOrigin: true }));
 app.use('/proxy/router', proxy({ target: `http://${routerBackend}`, pathRewrite: { '^/proxy/router': '' }, changeOrigin: true }));
@@ -45,6 +50,7 @@ app.use('/proxy/tpr/benchmark', proxy({
   pathRewrite: { '^/proxy/tpr/benchmark': '/apis/benchmark.fission.io/v1/namespaces/fission-benchmark' },
   changeOrigin: true,
 }));
+app.use('/proxy/prometheus', proxy({ target: `http://${prometheusBackend}`, pathRewrite: { '^/proxy/prometheus': '' }, changeOrigin: true }));
 appInfluxdb.use('', proxy({ target: `http://${influxdbBackend}`, changeOrigin: true }));
 app.use('/proxy/catalog', proxy({ target: `http://${catalogBackend}`, pathRewrite: { '^/proxy/catalog': '' }, changeOrigin: true }));
 

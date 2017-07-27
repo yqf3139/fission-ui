@@ -24,6 +24,10 @@ export function App(props) {
     browserHistory.push(e);
   };
 
+  const onExternalLink = (e) => {
+    window.open(`http://${location.hostname}:${e}`);
+  };
+
   return (
     <div className="container">
       <Navbar collapseOnSelect>
@@ -50,6 +54,22 @@ export function App(props) {
             <NavItem eventKey={'/service-catalog'} onSelect={onLink}>
               <i className="glyphicon glyphicon-th" />
               <span><FormattedMessage {...commonMessages.serviceCatalog} /></span>
+            </NavItem>
+            <NavItem eventKey={'31318'} onSelect={onExternalLink}>
+              <i className="glyphicon glyphicon-retweet" />
+              <span><FormattedMessage {...commonMessages.compose} /></span>
+            </NavItem>
+            <NavItem eventKey={'31326'} onSelect={onExternalLink}>
+              <i className="glyphicon glyphicon-fire" />
+              <span><FormattedMessage {...commonMessages.metric} /></span>
+            </NavItem>
+            <NavItem eventKey={'31327'} onSelect={onExternalLink}>
+              <i className="glyphicon glyphicon-zoom-in" />
+              <span><FormattedMessage {...commonMessages.tracing} /></span>
+            </NavItem>
+            <NavItem eventKey={'/billing'} onSelect={onLink}>
+              <i className="glyphicon glyphicon-btc" />
+              <span><FormattedMessage {...commonMessages.billing} /></span>
             </NavItem>
           </Nav>
         </Navbar.Collapse>

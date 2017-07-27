@@ -386,4 +386,20 @@ export default defineMessages({
     id: 'app.messages.diff',
     defaultMessage: 'Diff',
   },
+  compose: {
+    id: 'app.messages.compose',
+    defaultMessage: 'Compose',
+  },
+  metric: {
+    id: 'app.messages.metric',
+    defaultMessage: 'Metrics',
+  },
+  tracing: {
+    id: 'app.messages.tracing',
+    defaultMessage: 'Tracing',
+  },
+  billing: {
+    id: 'app.messages.billing',
+    defaultMessage: 'Billing',
+  },
 });

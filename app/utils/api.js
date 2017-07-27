@@ -6,6 +6,7 @@ import axios from 'axios';
 const basePath = '/proxy/controller/v1/';
 const routerPath = '/proxy/router';
 const catalogPath = '/proxy/catalog/apis/servicecatalog.k8s.io/v1alpha1/';
+const prometheusPath = '/proxy/prometheus';
 
 /**
  * Parses the JSON returned by a network request
@@ -203,6 +204,12 @@ export function catalogDelete(category, item) {
 
 export function getFunctionVersions(name) {
   return axios.get(`${basePath}functions/${name}/versions`)
+    .then(checkStatus)
+    .then(parseJSON);
+}
+
+export function queryPrometheus(query) {
+  return axios.get(`${prometheusPath}/api/v1/query?query=${query}`)
     .then(checkStatus)
     .then(parseJSON);
 }
