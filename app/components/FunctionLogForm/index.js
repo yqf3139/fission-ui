@@ -11,7 +11,6 @@ import FunctionLogItem from 'components/FunctionLogItem';
 // import commonMessages from 'messages';
 
 const INFLUXDB_DATABASE = 'fissionFunctionLog';
-const INFLUXDB_NODEPORT = '31315';
 const LOG_ITEM_KEYS = ['log', 'stream', 'funcuid', 'container'];
 const OR = (a, b) => a || b;
 const AND = (a, b) => a && b;
@@ -27,7 +26,7 @@ class FunctionLogForm extends React.Component { // eslint-disable-line react/pre
     this.timerId = null;
     this.client = new Influx.InfluxDB({
       host: window.location.hostname,
-      port: INFLUXDB_NODEPORT,
+      port: window.fissionNamespace === 'fission-dev' ? 31415 : 31315,
       database: INFLUXDB_DATABASE,
     });
     this.onPollLogs = this.onPollLogs.bind(this);

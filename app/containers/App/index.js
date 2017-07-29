@@ -28,6 +28,18 @@ export function App(props) {
     window.open(`http://${location.hostname}:${e}`);
   };
 
+  window.fissionPort2Namespace = {
+    31319: 'fission',
+    31419: 'fission-dev',
+  };
+
+  window.fissionNamespace2Port = ({
+    fission: 31319,
+    'fission-dev': 31419,
+  });
+
+  window.fissionNamespace = window.fissionPort2Namespace[window.location.port];
+
   return (
     <div className="container">
       <Navbar collapseOnSelect>
@@ -55,7 +67,7 @@ export function App(props) {
               <i className="glyphicon glyphicon-th" />
               <span><FormattedMessage {...commonMessages.serviceCatalog} /></span>
             </NavItem>
-            <NavItem eventKey={'31318'} onSelect={onExternalLink}>
+            <NavItem eventKey={window.fissionNamespace === 'fission' ? '31318' : '31418'} onSelect={onExternalLink}>
               <i className="glyphicon glyphicon-retweet" />
               <span><FormattedMessage {...commonMessages.compose} /></span>
             </NavItem>
@@ -77,7 +89,22 @@ export function App(props) {
       <div className="row">
         {React.Children.toArray(props.children)}
       </div>
+      <h5>Language</h5>
       <LocaleToggle />
+      <h5>Namespace</h5>
+      <div className="form-inline">
+        <select
+          className="form-control"
+          value={window.fissionNamespace2Port[window.fissionNamespace]}
+          onChange={(e) => onExternalLink(e.target.value)}
+        >
+          {
+            Object.keys(window.fissionNamespace2Port).sort().map((k) => (
+              <option key={k} value={window.fissionNamespace2Port[k]}>{k}</option>
+            ))
+          }
+        </select>
+      </div>
     </div>
   );
 }

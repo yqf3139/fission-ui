@@ -15,9 +15,6 @@ import SvcBillingForm from './svcform';
 
 import messages from './messages';
 
-const LATENCY_SUM = 'sum by (path) (fission_http_call_latency_seconds_summary_sum)';
-const LATENCY_CNT = 'sum by (path) (fission_http_call_latency_seconds_summary_count)';
-
 const MONEY_PER_100MS = 0.00001;
 const MONEY_PER_INVOKE = 0.00001;
 const STD_DISCOUNT = 0.8;
@@ -53,6 +50,11 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
   loadData() {
     const that = this;
     that.setState({ loading: true });
+
+    const ns = window.fissionNamespace || 'fission';
+    const LATENCY_SUM = `sum by (path) (fission_http_call_latency_seconds_summary_sum{kubernetes_namespace='${ns}'})`;
+    const LATENCY_CNT = `sum by (path) (fission_http_call_latency_seconds_summary_count{kubernetes_namespace='${ns}'})`;
+
     const jobs = [LATENCY_SUM, LATENCY_CNT].map((q) => (cb) => {
       queryPrometheus(q).then((data) => {
         if (data.status !== 'success') {
