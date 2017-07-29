@@ -175,8 +175,9 @@ export function postTriggerMQ(item) {
 
 export function catalogGet(category) {
   let path = category;
+  const ns = window.fissionNamespace || 'fission';
   if (category !== 'serviceclasses' && category !== 'brokers') {
-    path = `namespaces/fission/${category}`;
+    path = `namespaces/${ns}/${category}`;
   }
   return axios.get(`${catalogPath}${path}`)
     .then(checkStatus)
@@ -185,8 +186,9 @@ export function catalogGet(category) {
 
 export function catalogPost(category, item) {
   let path = category;
+  const ns = window.fissionNamespace || 'fission';
   if (category !== 'serviceclasses' && category !== 'brokers') {
-    path = `namespaces/fission/${category}`;
+    path = `namespaces/${ns}/${category}`;
   }
   return axios.post(`${catalogPath}${path}`, item)
     .then(checkStatus)
@@ -194,8 +196,9 @@ export function catalogPost(category, item) {
 }
 export function catalogDelete(category, item) {
   let path = category;
+  const ns = window.fissionNamespace || 'fission';
   if (category !== 'serviceclasses' && category !== 'brokers') {
-    path = `namespaces/fission/${category}`;
+    path = `namespaces/${ns}/${category}`;
   }
   return axios.delete(`${catalogPath}${path}/${item.metadata.name}`)
     .then(checkStatus)

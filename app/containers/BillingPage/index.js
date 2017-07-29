@@ -8,6 +8,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import ErrorIndicator from 'components/ErrorIndicator';
 import LoadingIndicator from 'components/LoadingIndicator';
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import * as async from 'async';
 import { queryPrometheus, catalogGet } from 'utils/api';
 import FuncBillingForm from './funcform';
@@ -25,7 +26,7 @@ const MONEY_SVC_PER_MINUTE = {
 };
 
 export class BillingPage extends React.Component { // eslint-disable-line react/prefer-stateless-function
-
+  /* eslint-disable no-mixed-operators */
   constructor() {
     super();
     this.state = {
@@ -45,6 +46,24 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
   getSum(arr) {
     if (arr.length === 0) return 0;
     return arr.map((e) => e.value).reduce((a, b) => a + b);
+  }
+
+  getBilling(sum, cnt, discount) {
+    const table = {};
+    sum.map((e) => {
+      const ref = {};
+      table[e.name] = ref;
+      ref.name = e.name.replace('/fission-function/', '');
+      ref.sum = e.value;
+      return null;
+    });
+    cnt.map((e) => {
+      const ref = table[e.name];
+      ref.cnt = e.value;
+      ref.billing = (ref.cnt * MONEY_PER_INVOKE + ref.sum / 10 * MONEY_PER_100MS) * discount;
+      return null;
+    });
+    return Object.keys(table).sort().map((k) => table[k]);
   }
 
   loadData() {
@@ -127,6 +146,11 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
 
     const total = apptotal + stdtotal + svctotal;
 
+    const apps = this.getBilling(sum.appfuncs, cnt.appfuncs, 1);
+    const stds = this.getBilling(sum.stdfuncs, cnt.stdfuncs, STD_DISCOUNT);
+
+    const rankingData = [...apps, ...stds, ...svcs].sort((a, b) => b.billing - a.billing).slice(0, 8);
+
     if (loading) {
       return <LoadingIndicator />;
     }
@@ -152,31 +176,48 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
           <i>* {100 - (STD_DISCOUNT * 100)}% discount for using standard functions</i>
         </p>
         <hr />
-        <h3>Details</h3>
-        <FuncBillingForm
-          title={'User functions'}
-          discount={1}
-          cnt={cnt.appfuncs}
-          sum={sum.appfuncs}
-          total={apptotal}
-        />
-        <FuncBillingForm
-          title={'Standard functions'}
-          discount={STD_DISCOUNT}
-          cnt={cnt.stdfuncs}
-          sum={sum.stdfuncs}
-          total={stdtotal}
-        />
-        <SvcBillingForm
-          title={'Third party services'}
-          svcs={svcs}
-          total={svctotal}
-        />
-        <br />
-        <hr />
-        <h3>
-          <span className="pull-right">Total: ￥{total.toFixed(4)}</span>
-        </h3>
+        <div className="row">
+          <div className="col-md-4">
+            <h3>Ranking</h3>
+            <ResponsiveContainer width={'100%'} height={500} >
+              <BarChart
+                data={rankingData}
+                layout="vertical"
+                margin={{ top: 10, right: 20, left: 50, bottom: 10 }}
+              >
+                <XAxis type="number" />
+                <YAxis type="category" dataKey="name" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="billing" fill="#4285f4" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="col-md-8">
+            <h3>Details</h3>
+            <FuncBillingForm
+              title={'User functions'}
+              items={apps}
+              total={apptotal}
+            />
+            <FuncBillingForm
+              title={'Standard functions'}
+              items={stds}
+              total={stdtotal}
+            />
+            <SvcBillingForm
+              title={'Third party services'}
+              svcs={svcs}
+              total={svctotal}
+            />
+            <br />
+            <hr />
+            <h3>
+              <span className="pull-right">Total: ￥{total.toFixed(4)}</span>
+            </h3>
+          </div>
+        </div>
       </div>
     );
   }
