@@ -17,7 +17,6 @@ import messages from './messages';
 
 const LATENCY_SUM = 'sum by (path) (fission_http_call_latency_seconds_summary_sum)';
 const LATENCY_CNT = 'sum by (path) (fission_http_call_latency_seconds_summary_count)';
-const LATENCY_AVG = 'sum by (path) (fission_http_call_latency_seconds_summary_sum / fission_http_call_latency_seconds_summary_count)';
 
 const MONEY_PER_100MS = 0.00001;
 const MONEY_PER_INVOKE = 0.00001;
@@ -37,7 +36,6 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
       error: false,
       sum: { stdfuncs: [], appfuncs: [] },
       cnt: { stdfuncs: [], appfuncs: [] },
-      avg: { stdfuncs: [], appfuncs: [] },
       svcs: [],
     };
     this.loadData = this.loadData.bind(this);
@@ -55,7 +53,7 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
   loadData() {
     const that = this;
     that.setState({ loading: true });
-    const jobs = [LATENCY_SUM, LATENCY_CNT, LATENCY_AVG].map((q) => (cb) => {
+    const jobs = [LATENCY_SUM, LATENCY_CNT].map((q) => (cb) => {
       queryPrometheus(q).then((data) => {
         if (data.status !== 'success') {
           cb('query failed', null);
@@ -102,8 +100,7 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
       that.setState({
         sum: { stdfuncs: results[0].stdfuncs, appfuncs: results[0].appfuncs },
         cnt: { stdfuncs: results[1].stdfuncs, appfuncs: results[1].appfuncs },
-        avg: { stdfuncs: results[2].stdfuncs, appfuncs: results[2].appfuncs },
-        svcs: results[3],
+        svcs: results[2],
         loading: false,
         error: false,
       });
@@ -111,7 +108,7 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
   }
 
   render() {
-    const { loading, error, sum, cnt, avg, svcs } = this.state;
+    const { loading, error, sum, cnt, svcs } = this.state;
 
     const stdsum = this.getSum(sum.stdfuncs);
     const appsum = this.getSum(sum.appfuncs);
@@ -159,7 +156,6 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
           discount={1}
           cnt={cnt.appfuncs}
           sum={sum.appfuncs}
-          avg={avg.appfuncs}
           total={apptotal}
         />
         <FuncBillingForm
@@ -167,7 +163,6 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
           discount={STD_DISCOUNT}
           cnt={cnt.stdfuncs}
           sum={sum.stdfuncs}
-          avg={avg.stdfuncs}
           total={stdtotal}
         />
         <SvcBillingForm
