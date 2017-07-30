@@ -83,6 +83,19 @@ export function App(props) {
               <i className="glyphicon glyphicon-btc" />
               <span><FormattedMessage {...commonMessages.billing} /></span>
             </NavItem>
+            <NavItem>
+              <i className="glyphicon glyphicon-home" />
+              <select
+                value={window.fissionNamespace2Port[window.fissionNamespace]}
+                onChange={(e) => onExternalLink(e.target.value)}
+              >
+                {
+                  Object.keys(window.fissionNamespace2Port).sort().map((k) => (
+                    <option key={k} value={window.fissionNamespace2Port[k]}>{k}</option>
+                  ))
+                }
+              </select>
+            </NavItem>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -91,20 +104,7 @@ export function App(props) {
       </div>
       <h5>Language</h5>
       <LocaleToggle />
-      <h5>Namespace</h5>
-      <div className="form-inline">
-        <select
-          className="form-control"
-          value={window.fissionNamespace2Port[window.fissionNamespace]}
-          onChange={(e) => onExternalLink(e.target.value)}
-        >
-          {
-            Object.keys(window.fissionNamespace2Port).sort().map((k) => (
-              <option key={k} value={window.fissionNamespace2Port[k]}>{k}</option>
-            ))
-          }
-        </select>
-      </div>
+
     </div>
   );
 }

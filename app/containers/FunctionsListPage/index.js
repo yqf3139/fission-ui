@@ -87,10 +87,16 @@ export class FunctionsListPage extends React.Component { // eslint-disable-line 
 
     items = sorting.field === '' ? items : items.sort(this.makeSorterField(sorting.field, sorting.ascend));
 
-    const functionsListProps = {
+    const userFunctionsProps = {
       loading,
       error,
-      items,
+      items: items.filter((e) => !e.name.startsWith('std-')),
+    };
+
+    const stdFunctionsProps = {
+      loading,
+      error,
+      items: items.filter((e) => e.name.startsWith('std-')),
     };
 
     return (
@@ -104,7 +110,10 @@ export class FunctionsListPage extends React.Component { // eslint-disable-line 
           <Link to="/functions/batch_upload" className="pull-right btn btn-info"><FormattedMessage {...commonMessages.batchUpload} /></Link>
           <Link to="/functions/create" className="pull-right btn btn-primary"><FormattedMessage {...commonMessages.add} /></Link>
         </div>
-        <FunctionsList {...functionsListProps} onRemove={this.onRemove} onChangeSortField={this.onChangeSortField} />
+        <h3><FormattedMessage {...commonMessages.user} /></h3>
+        <FunctionsList {...userFunctionsProps} onRemove={this.onRemove} onChangeSortField={this.onChangeSortField} editable />
+        <h3><FormattedMessage {...commonMessages.std} /></h3>
+        <FunctionsList {...stdFunctionsProps} onRemove={this.onRemove} onChangeSortField={this.onChangeSortField} />
       </div>
     );
   }

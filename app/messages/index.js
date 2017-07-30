@@ -402,4 +402,12 @@ export default defineMessages({
     id: 'app.messages.billing',
     defaultMessage: 'Billing',
   },
+  user: {
+    id: 'app.messages.user',
+    defaultMessage: 'User',
+  },
+  std: {
+    id: 'app.messages.std',
+    defaultMessage: 'Standard',
+  },
 });

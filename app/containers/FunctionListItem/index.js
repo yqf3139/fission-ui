@@ -12,7 +12,7 @@ import messages from './messages';
 
 export class FunctionListItem extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { item, onRemove } = this.props;
+    const { item, onRemove, editable } = this.props;
     return (
       <tr>
         <td>{ item.name }</td>
@@ -26,7 +26,9 @@ export class FunctionListItem extends React.Component { // eslint-disable-line r
         <td>
           <Link className="btn btn-primary" to={`/functions/edit/${item.name}`}><FormattedMessage {...commonMessages.edit} /></Link>
           { ' ' }
-          <a onClick={onRemove} className="btn btn-danger"><FormattedMessage {...commonMessages.delete} /></a>
+          {
+            editable && <a onClick={onRemove} className="btn btn-danger"><FormattedMessage {...commonMessages.delete} /></a>
+          }
         </td>
       </tr>
     );
@@ -108,6 +110,7 @@ function renderKubeWatchers(item) {
 FunctionListItem.propTypes = {
   item: PropTypes.object,
   onRemove: PropTypes.func,
+  editable: PropTypes.bool,
 };
 
 export default FunctionListItem;

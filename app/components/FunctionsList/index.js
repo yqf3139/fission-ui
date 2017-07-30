@@ -12,7 +12,7 @@ import FunctionListItem from 'containers/FunctionListItem';
 import { FormattedMessage } from 'react-intl';
 import commonMessages from 'messages';
 
-function FunctionsList({ loading, error, items, onRemove, onChangeSortField }) {
+function FunctionsList({ loading, error, items, onRemove, onChangeSortField, editable }) {
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -35,6 +35,7 @@ function FunctionsList({ loading, error, items, onRemove, onChangeSortField }) {
             <FunctionListItem
               item={item} key={`function-${index}`}
               onRemove={() => onRemove(item)}
+              editable={editable}
             />
           ))
         }
@@ -45,6 +46,7 @@ function FunctionsList({ loading, error, items, onRemove, onChangeSortField }) {
 
 FunctionsList.propTypes = {
   loading: PropTypes.bool,
+  editable: PropTypes.bool,
   error: PropTypes.any,
   items: PropTypes.oneOfType([
     PropTypes.object,
