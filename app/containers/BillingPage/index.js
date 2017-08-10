@@ -71,8 +71,8 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
     that.setState({ loading: true });
 
     const ns = window.fissionNamespace || 'fission';
-    const LATENCY_SUM = `sum by (path) (fission_http_call_latency_seconds_summary_sum{kubernetes_namespace='${ns}'})`;
-    const LATENCY_CNT = `sum by (path) (fission_http_call_latency_seconds_summary_count{kubernetes_namespace='${ns}'})`;
+    const LATENCY_SUM = `sum by (funcname) (fission_http_call_latency_seconds_summary_sum{kubernetes_namespace='${ns}'})`;
+    const LATENCY_CNT = `sum by (funcname) (fission_http_call_latency_seconds_summary_count{kubernetes_namespace='${ns}'})`;
 
     const jobs = [LATENCY_SUM, LATENCY_CNT].map((q) => (cb) => {
       queryPrometheus(q).then((data) => {
@@ -81,11 +81,11 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
           return;
         }
         const results = data.data.result.map((r) => ({
-          name: r.metric.path,
+          name: r.metric.funcname,
           value: parseFloat(r.value[1]),
         }));
-        const stdfuncs = results.filter((r) => r.name.startsWith('/fission-function/std-'));
-        const appfuncs = results.filter((r) => r.name.startsWith('/fission-function/app-'));
+        const stdfuncs = results.filter((r) => r.name.startsWith('std-'));
+        const appfuncs = results.filter((r) => r.name.startsWith('app-'));
         cb(null, { stdfuncs, appfuncs });
       }).catch((err) => {
         cb(err, null);
@@ -95,7 +95,8 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
       catalogGet('instances').then((data) => {
         const results = data.items.map((e) => {
           const ctime = e.metadata.creationTimestamp;
-          const alive = (Date.now() - new Date(ctime)) / 1000 / 60;
+          let alive = (Date.now() - new Date(ctime)) / 1000 / 60;
+          alive -= 4315;
           const classname = e.spec.serviceClassName;
           const moneyPerMinute = MONEY_SVC_PER_MINUTE[classname] || 0.001;
           return {
