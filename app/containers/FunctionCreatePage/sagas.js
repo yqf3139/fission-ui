@@ -29,7 +29,7 @@ function* testFunction(action) {
   const { fn } = action;
   const { method, headers, params, body, draft } = fn.test;
   if (draft) {
-    fn.name = v4();
+    fn.name = v4().substring(0, 4);
   }
   const url = `/fission-function/${fn.name}`;
 

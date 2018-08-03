@@ -17,7 +17,7 @@ class ServiceCatalogBrokersForm extends React.Component { // eslint-disable-line
     const { items, onRemove, onCreate } = this.props;
     return (
       <div>
-        <h3><FormattedMessage {...messages.headerhttptrigger} /></h3>
+        <h3><FormattedMessage {...messages.header} /></h3>
         <table className="table table-bordered">
           <thead>
             <tr>

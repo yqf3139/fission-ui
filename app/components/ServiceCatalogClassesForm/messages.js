@@ -6,8 +6,8 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  headerhttptrigger: {
-    id: 'app.components.ServiceCatalogClassesForm.headerhttptrigger',
+  header: {
+    id: 'app.components.ServiceCatalogClassesForm.header',
     defaultMessage: 'Service Classes',
   },
 });

@@ -12,17 +12,17 @@ const proxy = require('http-proxy-middleware');
 const app = express();
 const appInfluxdb = express();
 
-let controllerBackend = '192.168.99.100:31313';
+let controllerBackend = '47.75.141.45:31313';
 if (process.env.FISSION_CONTROLLER !== undefined) {
   controllerBackend = process.env.FISSION_CONTROLLER;
 }
 
-let routerBackend = '192.168.99.100:31314';
+let routerBackend = '47.75.141.45:31314';
 if (process.env.FISSION_ROUTER !== undefined) {
   routerBackend = process.env.FISSION_ROUTER;
 }
 
-let catalogBackend = '192.168.99.100:30080';
+let catalogBackend = '47.75.141.45:30080';
 if (process.env.K8S_CATALOG_URL !== undefined) {
   catalogBackend = process.env.K8S_CATALOG_URL;
 }
@@ -32,12 +32,12 @@ if (process.env.FISSION_K8S !== undefined) {
   k8sBackend = process.env.FISSION_K8S;
 }
 
-let influxdbBackend = '192.168.99.100:31315';
+let influxdbBackend = '47.75.141.45:31315';
 if (process.env.FISSION_LOGDB !== undefined) {
   influxdbBackend = process.env.FISSION_LOGDB;
 }
 
-let prometheusBackend = '192.168.99.100:31325';
+let prometheusBackend = '47.75.141.45:31325';
 if (process.env.FISSION_PROMETHEUS !== undefined) {
   prometheusBackend = process.env.FISSION_PROMETHEUS;
 }

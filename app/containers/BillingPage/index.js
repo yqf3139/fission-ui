@@ -16,13 +16,13 @@ import SvcBillingForm from './svcform';
 
 import messages from './messages';
 
-const MONEY_PER_100MS = 0.00001;
-const MONEY_PER_INVOKE = 0.00001;
-const STD_DISCOUNT = 0.8;
+const MONEY_PER_100MS = 0.0001;
+const MONEY_PER_INVOKE = 0.0002;
+const STD_DISCOUNT = 0.9;
 const MONEY_SVC_PER_MINUTE = {
-  redis: 0.0005,
-  minio: 0.001,
-  rethinkdb: 0.001,
+  redis: 0.005,
+  minio: 0.01,
+  rethinkdb: 0.01,
 };
 
 export class BillingPage extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -86,6 +86,7 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
         }));
         const stdfuncs = results.filter((r) => r.name.startsWith('std-'));
         const appfuncs = results.filter((r) => r.name.startsWith('app-'));
+
         cb(null, { stdfuncs, appfuncs });
       }).catch((err) => {
         cb(err, null);
@@ -96,7 +97,7 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
         const results = data.items.map((e) => {
           const ctime = e.metadata.creationTimestamp;
           let alive = (Date.now() - new Date(ctime)) / 1000 / 60;
-          alive -= 4315;
+          // alive -= 4315;
           const classname = e.spec.serviceClassName;
           const moneyPerMinute = MONEY_SVC_PER_MINUTE[classname] || 0.001;
           return {
@@ -163,18 +164,18 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
         {error &&
           <ErrorIndicator errors={[error]} />
         }
-        <h3>Rules</h3>
+        <h3>计费规则</h3>
         <p>
-          <i>For every function invocation: ￥{MONEY_PER_INVOKE}</i>
+          <i>每次函数调用: ￥{MONEY_PER_INVOKE}</i>
         </p>
         <p>
-          <i>For every 100ms computation: ￥{MONEY_PER_100MS}</i>
+          <i>每100毫秒函数计算费用: ￥{MONEY_PER_100MS}</i>
         </p>
         <p>
-          <i>For every third party service, charge according to SLA</i>
+          <i>对于每个第三方服务, 依据其套餐类型计费</i>
         </p>
         <p>
-          <i>* {100 - (STD_DISCOUNT * 100)}% discount for using standard functions</i>
+          <i>* 库函数的折扣：{100 - (STD_DISCOUNT * 100)}% </i>
         </p>
         <hr />
         <div className="row">
@@ -196,26 +197,26 @@ export class BillingPage extends React.Component { // eslint-disable-line react/
             </ResponsiveContainer>
           </div>
           <div className="col-md-8">
-            <h3>Details</h3>
+            <h3>详情</h3>
             <FuncBillingForm
-              title={'User functions'}
+              title={'用户函数'}
               items={apps}
               total={apptotal}
             />
             <FuncBillingForm
-              title={'Standard functions'}
+              title={'库函数'}
               items={stds}
               total={stdtotal}
             />
             <SvcBillingForm
-              title={'Third party services'}
+              title={'第三方服务'}
               svcs={svcs}
               total={svctotal}
             />
             <br />
             <hr />
             <h3>
-              <span className="pull-right">Total: ￥{total.toFixed(4)}</span>
+              <span className="pull-right">总计: ￥{total.toFixed(4)}</span>
             </h3>
           </div>
         </div>

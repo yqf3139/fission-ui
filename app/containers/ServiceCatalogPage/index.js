@@ -55,13 +55,13 @@ export class ServiceCatalogPage extends React.Component { // eslint-disable-line
         {error &&
           <ErrorIndicator errors={[error.getIn(['data', 'message'])]} />
         }
-        <ServiceCatalogClassesForm
-          items={serviceclasses}
-        />
         <ServiceCatalogBrokersForm
           items={brokers}
           onCreate={(i) => create('brokers', i)}
           onRemove={(i) => remove('brokers', i)}
+        />
+        <ServiceCatalogClassesForm
+          items={serviceclasses}
         />
         <ServiceCatalogInstancesForm
           items={instances}

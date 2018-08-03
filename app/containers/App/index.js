@@ -45,7 +45,7 @@ export function App(props) {
       <Navbar collapseOnSelect>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="/">Fission UI</a>
+            <a href="/">Cloud Studio</a>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
@@ -58,10 +58,6 @@ export function App(props) {
             <NavItem eventKey={'/environments'} onSelect={onLink}>
               <i className="glyphicon glyphicon-tasks" />
               <span><FormattedMessage {...commonMessages.environment} /></span>
-            </NavItem>
-            <NavItem eventKey={'/benchmarks'} onSelect={onLink}>
-              <i className="glyphicon glyphicon-stats" />
-              <span><FormattedMessage {...commonMessages.benchmark} /></span>
             </NavItem>
             <NavItem eventKey={'/service-catalog'} onSelect={onLink}>
               <i className="glyphicon glyphicon-th" />
@@ -102,7 +98,7 @@ export function App(props) {
       <div className="row">
         {React.Children.toArray(props.children)}
       </div>
-      <h5>Language</h5>
+      <h5>语言</h5>
       <LocaleToggle />
 
     </div>

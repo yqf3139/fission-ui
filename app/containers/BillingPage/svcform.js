@@ -17,11 +17,11 @@ class SvcBillingForm extends React.Component { // eslint-disable-line react/pref
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Service Class</th>
-              <th>Create Time</th>
-              <th>Alive Minutes</th>
-              <th>Billing</th>
+              <th>名称</th>
+              <th>服务类别</th>
+              <th>创建时间</th>
+              <th>服务时间(分钟)</th>
+              <th>费用</th>
             </tr>
           </thead>
           <tbody>
@@ -36,7 +36,7 @@ class SvcBillingForm extends React.Component { // eslint-disable-line react/pref
             }
           </tbody>
         </table>
-        <span className="pull-right">Sum: ￥{total.toFixed(4)}</span>
+        <span className="pull-right">总计: ￥{total.toFixed(4)}</span>
         <br />
       </div>
     );
